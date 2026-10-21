@@ -1,16 +1,173 @@
 ---
+import MainLayout from "../layouts/MainLayout.astro";
+import Hero from "../components/hero.astro";
+import About from "../components/about.astro";
+import ProjectCard from "../components/projectCard.astro";
+import GroupCard from "../components/groupCard.astro";
+import { getCollection } from "astro:content";
+
+const projects = await getCollection("projects");
+const groups = await getCollection("groups");
+
+// Filtros: una opción por cada tecnología/categoría existente
+const categories = [...new Set(projects.flatMap((p) => p.data.technologies ?? []))].sort();
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<MainLayout
+  title="KBS | Comunidad y proyectos"
+  description="Página oficial del grupo KBS: comunidad académica y proyectos tecnológicos."
+  navVariant="overlay"
+  active="inicio"
+>
+  <main>
+    <Hero />
+    <About />
+
+    <section id="proyectos" class="section-block projects-section">
+      <div class="inner">
+        <div class="heading">
+          <div>
+            <p class="eyebrow">Lo que hacemos</p>
+            <h2>Proyectos</h2>
+          </div>
+          <p class="intro">
+            Una colección de ideas, experimentos y soluciones desarrolladas por KBS.
+          </p>
+        </div>
+
+        {categories.length > 0 && (
+          <div class="project-filters" role="group" aria-label="Filtrar proyectos por categoría">
+            <button class="filter-btn active" type="button" data-filter="all" aria-pressed="true">Todos</button>
+            {categories.map((c) => (
+              <button class="filter-btn" type="button" data-filter={c} aria-pressed="false">{c}</button>
+            ))}
+          </div>
+        )}
+
+        <div class="projects-grid" id="projects-grid">
+          {projects.map((project) => (
+            <ProjectCard
+              title={project.data.title}
+              description={project.data.description}
+              technologies={project.data.technologies}
+              image={project.data.image}
+              status={project.data.status}
+              href={`/proyectos/${project.id}/`}
+            />
+          ))}
+        </div>
+
+        <p class="empty-state" id="no-results" hidden>No hay proyectos en esta categoría todavía.</p>
+
+        {projects.length === 0 && (
+          <p class="empty-state">Próximamente publicaremos nuestros proyectos.</p>
+        )}
+      </div>
+    </section>
+
+    <section id="conocenos" class="section-block groups-section">
+      <div class="inner">
+        <div class="heading">
+          <div>
+            <p class="eyebrow">Nuestra comunidad</p>
+            <h2>Conócenos</h2>
+          </div>
+          <p class="intro">Detrás de cada proyecto hay personas, ideas y colaboración.</p>
+        </div>
+
+        <div class="projects-grid groups-grid">
+          {groups.map((group) => (
+            <GroupCard
+              nombre={group.data.nombre}
+              slogan={group.data.slogan}
+              foto={group.data.foto}
+              integrantes={group.data.integrantes}
+              proyectos={group.data.proyectos}
+              descripcion={group.data.descripcion}
+              href={`/grupos/${group.id}/`}
+            />
+          ))}
+        </div>
+
+        {groups.length === 0 && <p class="empty-state">Próximamente conocerás a nuestros grupos.</p>}
+      </div>
+    </section>
+  </main>
+</MainLayout>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>(".filter-btn");
+  const cards = document.querySelectorAll<HTMLElement>("#projects-grid .project-card");
+  const empty = document.getElementById("no-results");
+
+  buttons.forEach((btn) =>
+    btn.addEventListener("click", () => {
+      const filter = btn.dataset.filter ?? "all";
+
+      buttons.forEach((b) => {
+        const on = b === btn;
+        b.classList.toggle("active", on);
+        b.setAttribute("aria-pressed", String(on));
+      });
+
+      let visible = 0;
+      cards.forEach((card) => {
+        const tags: string[] = JSON.parse(card.dataset.tags ?? "[]");
+        const show = filter === "all" || tags.includes(filter);
+        card.hidden = !show;
+        if (show) visible++;
+      });
+
+      if (empty) empty.hidden = visible > 0;
+    })
+  );
+</script>
+
+<style>
+  .section-block {
+    padding-block: clamp(64px, 9vw, 112px);
+  }
+
+  .projects-section {
+    background: var(--color-background);
+  }
+
+  .groups-section {
+    background: var(--color-surface);
+  }
+
+  .inner {
+    width: min(var(--container-width), calc(100% - 48px));
+    margin-inline: auto;
+  }
+
+  .heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px 32px;
+    margin-bottom: 36px;
+  }
+
+  .heading h2 {
+    margin: 0;
+    font-size: clamp(2.2rem, 4.5vw, 3.6rem);
+  }
+
+  .intro {
+    max-width: 360px;
+    margin: 0;
+    color: var(--color-muted);
+  }
+
+  .groups-grid {
+    margin-top: 8px;
+  }
+
+  @media (max-width: 700px) {
+    .inner {
+      width: calc(100% - 32px);
+    }
+  }
+</style>

@@ -1,0 +1,228 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import { getCollection, render } from "astro:content";
+
+export async function getStaticPaths() {
+  const projects = await getCollection("projects");
+
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+
+const groups = await getCollection("groups");
+const members = await getCollection("members");
+
+const projectGroup = groups.find((group) => group.id === project.data.grupo);
+
+const projectMembers = members.filter((member) =>
+  (project.data.encargados ?? []).some(
+    (id) => id.trim().toLowerCase() === member.id.trim().toLowerCase()
+  )
+);
+---
+
+<MainLayout
+  title={`${project.data.title} | KBS`}
+  description={project.data.description}
+  active="proyectos"
+>
+  <main class="project-page">
+    <section class="page-hero">
+      <div class="wrap">
+        <a class="back-link" href="/#proyectos">← Volver a proyectos</a>
+
+        <div class="hero-grid">
+          <div class="hero-text">
+            <p class="eyebrow on-dark">Proyectos</p>
+            <h1>{project.data.title}</h1>
+            <p class="lead">{project.data.description}</p>
+
+            <ul class="tags-list">
+              <li><span class="tag">{project.data.status}</span></li>
+              {(project.data.technologies ?? []).map((technology) => (
+                <li><span class="tag tag-outline">{technology}</span></li>
+              ))}
+            </ul>
+          </div>
+
+          <img
+            class="cover"
+            src={project.data.image}
+            alt={`Imagen del proyecto ${project.data.title}`}
+            onerror="this.style.display='none'"
+          />
+        </div>
+      </div>
+    </section>
+
+    <div class="wrap body">
+      <section class="project-detail">
+        <div class="project-detail-main">
+          <p class="eyebrow">Sobre el proyecto</p>
+          <h2>La idea detrás del proyecto</h2>
+          <div class="markdown-content">
+            <Content />
+          </div>
+        </div>
+
+        <aside class="project-detail-info">
+          <p class="eyebrow">Información</p>
+
+          <div class="info-item">
+            <span>Estado</span>
+            <strong>{project.data.status}</strong>
+          </div>
+
+          <div class="info-item">
+            <span>Grupo responsable</span>
+            {projectGroup ? (
+              <a class="read-more" href={`/grupos/${projectGroup.id}/`}>{projectGroup.data.nombre}</a>
+            ) : (
+              <strong>Grupo no encontrado</strong>
+            )}
+          </div>
+
+          <div class="info-item">
+            <span>Integrantes responsables</span>
+            {projectMembers.length > 0 ? (
+              <ul class="plain-list">
+                {projectMembers.map((member) => (
+                  <li><a class="read-more" href={`/integrantes/${member.id}/`}>{member.data.nombre}</a></li>
+                ))}
+              </ul>
+            ) : (
+              <strong>Integrantes no encontrados</strong>
+            )}
+          </div>
+        </aside>
+      </section>
+
+      <a class="btn btn-outline more" href="/#proyectos">← Explorar más proyectos</a>
+    </div>
+  </main>
+</MainLayout>
+
+<style>
+  .wrap {
+    width: min(1100px, calc(100% - 48px));
+    margin-inline: auto;
+  }
+
+  .page-hero {
+    padding: 36px 0 72px;
+    background: var(--color-primary);
+    color: var(--color-white);
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-bottom: 40px;
+    color: rgb(255 255 255 / 80%);
+    font-size: 0.85rem;
+  }
+
+  .back-link:hover {
+    color: var(--color-accent);
+  }
+
+  .on-dark {
+    color: var(--color-white);
+  }
+
+  .page-hero h1 {
+    margin-bottom: 18px;
+    color: var(--color-white);
+    font-size: clamp(2.4rem, 6vw, 4.5rem);
+  }
+
+  .lead {
+    max-width: 680px;
+    color: rgb(255 255 255 / 88%);
+    font-size: clamp(1rem, 1.8vw, 1.2rem);
+  }
+
+  .tags-list {
+    margin: 24px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tag-outline {
+    border: 1.5px solid rgb(255 255 255 / 60%);
+    background: transparent;
+    color: var(--color-white);
+  }
+
+  .body {
+    padding-block: 8px 80px;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 380px);
+    align-items: center;
+    gap: clamp(28px, 5vw, 64px);
+  }
+
+  .cover {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius-lg);
+    background: #E9EDF3;
+    box-shadow: 0 16px 40px rgb(0 0 0 / 30%);
+  }
+
+  .page-hero h1 {
+    font-size: clamp(2rem, 4.6vw, 3.6rem);
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 860px) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .cover {
+      max-width: 420px;
+      aspect-ratio: 16 / 10;
+    }
+  }
+
+  .project-detail {
+    margin-top: 48px;
+  }
+
+  .project-detail-main h2 {
+    font-size: clamp(1.6rem, 3vw, 2.3rem);
+  }
+
+  .markdown-content {
+    color: var(--color-text);
+    line-height: 1.9;
+  }
+
+  .plain-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .more {
+    margin-top: 40px;
+  }
+
+  @media (max-width: 700px) {
+    .wrap {
+      width: calc(100% - 32px);
+    }
+  }
+</style>

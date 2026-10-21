@@ -1,0 +1,239 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import { getCollection, render } from "astro:content";
+
+export async function getStaticPaths() {
+  const members = await getCollection("members");
+
+  return members.map((member) => ({
+    params: { slug: member.id },
+    props: { member },
+  }));
+}
+
+const { member } = Astro.props;
+const { Content } = await render(member);
+
+const groups = await getCollection("groups");
+const group = groups.find((item) => item.id.toLowerCase() === member.data.grupo.toLowerCase());
+
+const projects = await getCollection("projects");
+const memberProjects = projects.filter((project) =>
+  (project.data.encargados ?? []).some(
+    (id) => id.trim().toLowerCase() === member.id.trim().toLowerCase()
+  )
+);
+---
+
+<MainLayout
+  title={`${member.data.nombre} | KBS`}
+  description={`Perfil de ${member.data.nombre}, integrante de KBS.`}
+  active="conocenos"
+>
+  <main>
+    <section class="page-hero">
+      <div class="wrap">
+        <a class="back-link" href={group ? `/grupos/${group.id}/` : "/#conocenos"}>
+          ← {group ? "Volver al grupo" : "Volver a Conócenos"}
+        </a>
+      </div>
+    </section>
+
+    <div class="wrap body">
+      <section class="profile-header">
+        <div class="profile-photo">
+          <img
+            src={member.data.foto}
+            alt={`Foto de ${member.data.nombre}`}
+            onerror="this.style.visibility='hidden'"
+          />
+        </div>
+
+        <div class="profile-info">
+          <p class="eyebrow">Perfil del integrante</p>
+          <h1>{member.data.nombre}</h1>
+          <p class="role">
+            {group ? (
+              <a class="tag" href={`/grupos/${group.id}/`}>{group.data.nombre}</a>
+            ) : (
+              <span class="tag">Integrante de KBS</span>
+            )}
+          </p>
+
+          <a class="email" href={`mailto:${member.data.correo}`}>{member.data.correo}</a>
+
+          <div class="bio"><Content /></div>
+
+          <div class="social-links">
+            {member.data.links.map((link) => (
+              <a href={link.url} target="_blank" rel="noopener noreferrer">{link.nombre} ↗</a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {group && (
+        <section class="info-panel team">
+          <div>
+            <p class="eyebrow">Trabajo en equipo</p>
+            <h2>Parte de {group.data.nombre}</h2>
+            <p class="text-muted">{group.data.slogan}</p>
+          </div>
+          <a class="btn btn-secondary" href={`/grupos/${group.id}/`}>Conocer al grupo →</a>
+        </section>
+      )}
+
+      <section class="projects">
+        <p class="eyebrow">Trabajo y colaboraciones</p>
+        <h2>Proyectos en los que he participado</h2>
+
+        {memberProjects.length > 0 ? (
+          <div class="projects-list">
+            {memberProjects.map((project) => (
+              <a class="project-row" href={`/proyectos/${project.id}/`}>
+                <div>
+                  <h3>{project.data.title}</h3>
+                  <p>{project.data.description}</p>
+                </div>
+                <span class="tag">{project.data.status}</span>
+              </a>
+            ))}
+          </div>
+        ) : (
+          <p class="empty-state">Este integrante todavía no tiene proyectos publicados.</p>
+        )}
+      </section>
+    </div>
+  </main>
+</MainLayout>
+
+<style>
+  .wrap {
+    width: min(1100px, calc(100% - 48px));
+    margin-inline: auto;
+  }
+
+  .page-hero {
+    height: 200px;
+    padding-top: 36px;
+    background: var(--color-primary);
+  }
+
+  .back-link {
+    color: rgb(255 255 255 / 80%);
+    font-size: 0.85rem;
+  }
+
+  .back-link:hover {
+    color: var(--color-accent);
+  }
+
+  .body {
+    margin-top: -90px;
+    padding-bottom: 80px;
+  }
+
+  .profile-photo {
+    flex-shrink: 0;
+    border: 6px solid var(--color-white);
+    box-shadow: var(--shadow-card);
+  }
+
+  .profile-info h1 {
+    margin-bottom: 10px;
+    font-size: clamp(2rem, 4.5vw, 3.2rem);
+    overflow-wrap: anywhere;
+  }
+
+  .role {
+    margin-bottom: 8px;
+  }
+
+  .email {
+    color: var(--color-primary);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: var(--color-accent);
+    text-decoration-thickness: 3px;
+    text-underline-offset: 4px;
+    overflow-wrap: anywhere;
+  }
+
+  .bio {
+    margin-top: 18px;
+    color: var(--color-text);
+  }
+
+  .team {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 56px;
+  }
+
+  .team h2 {
+    margin-bottom: 6px;
+    font-size: 1.6rem;
+  }
+
+  .team p {
+    margin: 0;
+  }
+
+  .projects h2 {
+    margin-bottom: 24px;
+    font-size: clamp(1.7rem, 3.5vw, 2.4rem);
+  }
+
+  .projects-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .project-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 22px 26px;
+    border: 1px solid rgb(0 40 85 / 6%);
+    border-radius: var(--radius-card);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-card);
+    transition: transform var(--transition), box-shadow var(--transition);
+  }
+
+  .project-row:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .project-row h3 {
+    margin-bottom: 4px;
+    font-size: 1.3rem;
+  }
+
+  .project-row p {
+    margin: 0;
+    color: var(--color-muted);
+    font-size: 0.92rem;
+  }
+
+  @media (max-width: 700px) {
+    .wrap {
+      width: calc(100% - 32px);
+    }
+
+    .profile-photo {
+      width: 140px;
+    }
+
+    .project-row {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+</style>

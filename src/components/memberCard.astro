@@ -1,0 +1,65 @@
+---
+interface Props {
+  nombre: string;
+  correo: string;
+  foto: string;
+  href: string;
+}
+
+const { nombre, correo, foto, href } = Astro.props;
+---
+
+<a class="member-card" href={href}>
+  <div class="card-image">
+    <img src={foto} alt={`Foto de ${nombre}`} loading="lazy" onerror="this.style.visibility='hidden'" />
+  </div>
+  <div class="card-body">
+    <h3>{nombre}</h3>
+    <p>{correo}</p>
+    <span class="read-more">Ver perfil <span class="arrow" aria-hidden="true">→</span></span>
+  </div>
+</a>
+
+<style>
+  .member-card {
+    display: block;
+    color: inherit;
+  }
+
+  .card-image {
+    aspect-ratio: 4 / 3;
+  }
+
+  .card-image img {
+    transition: transform 400ms ease;
+  }
+
+  .member-card:hover .card-image img {
+    transform: scale(1.05);
+  }
+
+  .card-body {
+    padding: 18px 20px 22px;
+  }
+
+  h3 {
+    margin-bottom: 4px;
+    font-size: 1.15rem;
+  }
+
+  p {
+    margin-bottom: 12px;
+    font-size: 0.85rem;
+    overflow-wrap: anywhere;
+  }
+
+  .arrow {
+    display: inline-grid;
+    width: 24px;
+    height: 24px;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--color-accent);
+    color: var(--color-primary);
+  }
+</style>

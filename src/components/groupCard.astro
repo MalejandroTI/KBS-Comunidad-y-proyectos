@@ -1,0 +1,101 @@
+---
+interface Props {
+  nombre: string;
+  slogan: string;
+  foto: string;
+  integrantes: string[];
+  proyectos: string[];
+  descripcion: string;
+  href: string;
+}
+
+const { nombre, slogan, foto, integrantes, proyectos, descripcion, href } = Astro.props;
+---
+
+<article class="group-card">
+  <div class="card-image">
+    <img src={foto} alt={`Grupo ${nombre}`} loading="lazy" onerror="this.style.visibility='hidden'" />
+  </div>
+
+  <div class="card-body">
+    <div class="counts">
+      <span class="tag">{integrantes.length} integrantes</span>
+      <span class="tag">{proyectos.length} proyectos</span>
+    </div>
+
+    <h3><a href={href}>{nombre}</a></h3>
+    <p class="slogan">{slogan}</p>
+    <p class="desc">{descripcion}</p>
+
+    <a class="read-more" href={href}>Conocer al grupo <span aria-hidden="true">→</span></a>
+  </div>
+</article>
+
+<style>
+  .group-card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-image {
+    height: 190px;
+    overflow: hidden;
+    background: #E9EDF3;
+  }
+
+  .card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 400ms ease;
+  }
+
+  .group-card:hover .card-image img {
+    transform: scale(1.05);
+  }
+
+  .card-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding: 22px 24px 26px;
+  }
+
+  .counts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+
+  h3 {
+    margin-bottom: 6px;
+  }
+
+  .slogan {
+    margin-bottom: 8px;
+    color: var(--color-primary) !important;
+    font-weight: 600;
+  }
+
+  .desc {
+    flex: 1;
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+  }
+
+  .read-more span {
+    display: inline-grid;
+    width: 26px;
+    height: 26px;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--color-accent);
+    color: var(--color-primary);
+    transition: transform var(--transition);
+  }
+
+  .read-more:hover span {
+    transform: translateX(4px);
+  }
+</style>

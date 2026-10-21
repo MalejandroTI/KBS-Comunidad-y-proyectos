@@ -1,0 +1,318 @@
+---
+interface Slide {
+  image: string;
+  alt: string;
+}
+
+interface Props {
+  slides?: Slide[];
+}
+
+/**
+ * Para usar fotografías reales, copia las imágenes en /public/images/hero/
+ * y ajusta esta lista. Si el archivo no existe, se ve el degradado azul.
+ */
+const {
+  slides = [
+    { image: "/images/hero/hero-1.webp", alt: "Integrantes de KBS trabajando en equipo" },
+    { image: "/images/hero/hero-2.webp", alt: "Presentación de un proyecto de KBS" },
+    { image: "/images/hero/hero-3.webp", alt: "Sesión de aprendizaje de la comunidad KBS" },
+  ],
+} = Astro.props;
+---
+
+<section class="hero" id="inicio" aria-roledescription="carrusel" aria-label="Portada">
+  <div class="hero-slides">
+    {slides.map((slide, i) => (
+      <div
+        class:list={["hero-slide", `tone-${i % 3}`, { active: i === 0 }]}
+        style={`--img: url('${slide.image}')`}
+        role="img"
+        aria-label={slide.alt}
+        aria-hidden={i === 0 ? "false" : "true"}
+      ></div>
+    ))}
+  </div>
+  <div class="hero-overlay"></div>
+
+  <div class="hero-content">
+    <p class="eyebrow">KBS · DATA LAB</p>
+    <h1>Aprendemos, investigamos y creamos tecnología juntos</h1>
+    <p class="hero-lead">
+      Conectamos estudiantes, docentes y aliados para transformar conocimiento,
+      datos e ideas en proyectos con impacto.
+    </p>
+    <p class="hero-aux">Encuentra proyectos, grupos y personas según lo que necesitas.</p>
+
+    <div class="hero-actions">
+      <a class="btn btn-light" href="/#proyectos">Explorar proyectos</a>
+      <a class="btn btn-light" href="/#conocenos">Conocer los grupos</a>
+      <a class="hero-link" href="/#quienes-somos">Encontrar mi ruta con KBS <span aria-hidden="true">↓</span></a>
+    </div>
+  </div>
+
+  <div class="hero-bottom">
+    <p class="hero-keywords">Aprendizaje · Datos · Innovación · Colaboración · Impacto</p>
+
+    <div class="hero-controls">
+      <button class="ctl" type="button" data-dir="-1" aria-label="Imagen anterior">←</button>
+      <button class="ctl" type="button" data-dir="1" aria-label="Imagen siguiente">→</button>
+      <div class="dots" role="tablist" aria-label="Seleccionar imagen">
+        {slides.map((_, i) => (
+          <button
+            type="button"
+            class:list={["dot", { active: i === 0 }]}
+            data-index={i}
+            role="tab"
+            aria-selected={i === 0 ? "true" : "false"}
+            aria-label={`Ir a la imagen ${i + 1}`}
+          ></button>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const hero = document.querySelector<HTMLElement>(".hero");
+  if (hero) {
+    const slides = [...hero.querySelectorAll<HTMLElement>(".hero-slide")];
+    const dots = [...hero.querySelectorAll<HTMLButtonElement>(".dot")];
+    let current = 0;
+    let timer: number | undefined;
+
+    const go = (n: number) => {
+      current = (n + slides.length) % slides.length;
+      slides.forEach((s, i) => {
+        s.classList.toggle("active", i === current);
+        s.setAttribute("aria-hidden", String(i !== current));
+      });
+      dots.forEach((d, i) => {
+        d.classList.toggle("active", i === current);
+        d.setAttribute("aria-selected", String(i === current));
+      });
+    };
+
+    const start = () => {
+      stop();
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      timer = window.setInterval(() => go(current + 1), 7000);
+    };
+    const stop = () => timer && window.clearInterval(timer);
+
+    hero.querySelectorAll<HTMLButtonElement>(".ctl").forEach((b) =>
+      b.addEventListener("click", () => {
+        go(current + Number(b.dataset.dir));
+        start();
+      })
+    );
+    dots.forEach((d) =>
+      d.addEventListener("click", () => {
+        go(Number(d.dataset.index));
+        start();
+      })
+    );
+    hero.addEventListener("mouseenter", stop);
+    hero.addEventListener("mouseleave", start);
+    start();
+  }
+</script>
+
+<style>
+  .hero {
+    position: relative;
+    display: flex;
+    min-height: max(680px, 100svh);
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    background: var(--color-dark);
+    color: var(--color-white);
+  }
+
+  .hero-slides,
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+  }
+
+  .hero-slide {
+    position: absolute;
+    inset: 0;
+    background-color: var(--color-dark);
+    background-image: var(--img), var(--grad);
+    background-position: center;
+    background-size: cover;
+    opacity: 0;
+    transition: opacity 900ms ease;
+  }
+
+  .hero-slide.active {
+    opacity: 1;
+  }
+
+  /* Degradados de respaldo cuando aún no hay fotografías */
+  .tone-0 { --grad: radial-gradient(circle at 80% 20%, #0b4a8f 0%, transparent 55%), linear-gradient(135deg, #002855, #07182B); }
+  .tone-1 { --grad: radial-gradient(circle at 20% 80%, #1c5fa8 0%, transparent 55%), linear-gradient(135deg, #07182B, #002855); }
+  .tone-2 { --grad: radial-gradient(circle at 75% 75%, #8a6200 0%, transparent 50%), linear-gradient(135deg, #002855, #07182B); }
+
+  .hero-overlay {
+    background: linear-gradient(
+      90deg,
+      rgb(0 20 43 / 88%) 0%,
+      rgb(0 20 43 / 62%) 55%,
+      rgb(0 20 43 / 28%) 100%
+    );
+  }
+
+  .hero-content {
+    position: relative;
+    width: min(var(--container-width), calc(100% - 48px));
+    margin-inline: auto;
+    padding: 150px 0 130px;
+  }
+
+  .hero-content > * {
+    max-width: 760px;
+  }
+
+  .hero .eyebrow,
+  .hero h1 {
+    color: var(--color-white);
+  }
+
+  .hero h1 {
+    margin-bottom: 22px;
+    font-size: clamp(2.3rem, 5.2vw, 4.2rem);
+    line-height: 1.05;
+  }
+
+  .hero-lead {
+    max-width: 620px;
+    color: rgb(255 255 255 / 92%);
+    font-size: clamp(1rem, 1.5vw, 1.2rem);
+  }
+
+  .hero-aux {
+    color: rgb(255 255 255 / 75%);
+    font-size: 0.9rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px 14px;
+    margin-top: 28px;
+  }
+
+  .btn-light {
+    background: var(--color-white);
+    color: var(--color-primary);
+  }
+
+  .btn-light:hover {
+    background: var(--color-accent);
+  }
+
+  .hero-link {
+    margin-left: 10px;
+    padding-bottom: 3px;
+    border-bottom: 2px solid var(--color-accent);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .hero-link:hover {
+    color: var(--color-accent);
+  }
+
+  .hero-bottom {
+    position: absolute;
+    right: 0;
+    bottom: 32px;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    width: min(var(--container-width), calc(100% - 48px));
+    margin-inline: auto;
+  }
+
+  .hero-keywords {
+    margin: 0;
+    color: rgb(255 255 255 / 85%);
+    font-size: 0.82rem;
+  }
+
+  .hero-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .ctl {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    place-items: center;
+    border: 1.5px solid rgb(255 255 255 / 70%);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--color-white);
+    font-size: 1.05rem;
+    transition: background var(--transition), color var(--transition);
+  }
+
+  .ctl:hover {
+    background: var(--color-white);
+    color: var(--color-primary);
+  }
+
+  .dots {
+    display: flex;
+    gap: 8px;
+    margin-left: 10px;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: rgb(255 255 255 / 45%);
+    transition: width var(--transition), background var(--transition);
+  }
+
+  .dot.active {
+    width: 28px;
+    background: var(--color-accent);
+  }
+
+  @media (max-width: 700px) {
+    .hero {
+      min-height: 720px;
+    }
+
+    .hero-content {
+      width: calc(100% - 32px);
+      padding: 120px 0 150px;
+    }
+
+    .hero-bottom {
+      width: calc(100% - 32px);
+      bottom: 24px;
+    }
+
+    .hero-actions .btn {
+      width: 100%;
+    }
+
+    .hero-link {
+      margin-left: 0;
+    }
+  }
+</style>

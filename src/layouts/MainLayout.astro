@@ -1,0 +1,37 @@
+---
+import "../styles/global.css";
+import Navbar from "../components/navbar.astro";
+import Footer from "../components/footer.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** "overlay" solo en la portada */
+  navVariant?: "overlay" | "solid";
+  active?: string;
+}
+
+const {
+  title = "KBS | Proyectos tecnológicos",
+  description = "Conoce los equipos, integrantes y proyectos tecnológicos de KBS.",
+  navVariant = "solid",
+  active = "",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#002855" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+  </head>
+
+  <body>
+    <Navbar variant={navVariant} active={active} />
+    <slot />
+    <Footer />
+  </body>
+</html>

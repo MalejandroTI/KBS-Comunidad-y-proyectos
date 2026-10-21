@@ -1,0 +1,74 @@
+
+/* ==============================
+   ENCABEZADO
+   ============================== */
+
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0 18px;
+  border-bottom: 2px solid #002855;
+}
+
+/* Logotipo */
+
+.brand {
+  color: #002855;
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  text-decoration: none;
+}
+
+/* Enlace de búsqueda */
+
+.search-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #26364A;
+  font-size: 10px;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+/* ==============================
+   NAVEGACIÓN PRINCIPAL
+   ============================== */
+
+.main-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 0;
+  border-bottom: 1px solid #E1E6ED;
+}
+
+.main-nav a {
+  color: #002855;
+  font-size: 11px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+/* Efectos al pasar el cursor */
+
+.main-nav a:hover,
+.search-link:hover {
+  color: #F2A900;
+}
+
+/* ==============================
+   DISEÑO RESPONSIVO
+   ============================== */
+
+@media (max-width: 480px) {
+  .main-nav {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 14px;
+  }
+}

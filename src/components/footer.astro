@@ -1,0 +1,45 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="footer-content">
+    <div class="footer-brand">
+      <strong>KBS<span>.</span></strong>
+      <p>Comunidad académica y tecnológica.</p>
+    </div>
+
+    <nav class="footer-links" aria-label="Pie de página">
+      <a href="/#inicio">Inicio</a>
+      <a href="/#quienes-somos">Quiénes somos</a>
+      <a href="/#proyectos">Proyectos</a>
+      <a href="/#conocenos">Conócenos</a>
+    </nav>
+  </div>
+
+  <div class="footer-bottom">KBS · Período académico {year}</div>
+</footer>
+
+<style>
+  .footer-brand strong {
+    color: var(--color-white);
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    letter-spacing: -0.06em;
+  }
+
+  .footer-brand strong span {
+    color: var(--color-accent);
+  }
+
+  .footer-brand p {
+    margin: 4px 0 0;
+    color: rgb(255 255 255 / 75%);
+  }
+
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 22px;
+  }
+</style>

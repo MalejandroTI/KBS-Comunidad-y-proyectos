@@ -1,0 +1,111 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  technologies: string[];
+  image: string;
+  status: string;
+  href: string;
+}
+
+const { title, description, technologies, image, status, href } = Astro.props;
+const tags = [status, ...technologies];
+---
+
+<article class="project-card" data-tags={JSON.stringify(technologies)}>
+  <div class="card-tags" aria-label="Categorías">
+    {tags.map((tag) => <span class="tag">{tag}</span>)}
+  </div>
+
+  <a class="card-image" href={href} aria-label={`Ver proyecto ${title}`} tabindex="-1">
+    <img
+      src={image}
+      alt={`Vista previa del proyecto ${title}`}
+      loading="lazy"
+      onerror="this.style.visibility='hidden'"
+    />
+  </a>
+
+  <div class="card-body">
+    <h3><a href={href}>{title}</a></h3>
+    <p>{description}</p>
+    <a class="read-more" href={href}>Leer más <span aria-hidden="true">→</span></a>
+  </div>
+</article>
+
+<style>
+  .project-card {
+    display: flex;
+    flex-direction: column;
+    padding: 14px 14px 0;
+  }
+
+  .project-card[hidden] {
+    display: none;
+  }
+
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-height: 30px;
+    margin-bottom: 12px;
+  }
+
+  .card-image {
+    display: block;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    border-radius: 14px;
+    background: #E9EDF3;
+  }
+
+  .card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 400ms ease;
+  }
+
+  .project-card:hover .card-image img {
+    transform: scale(1.05);
+  }
+
+  .card-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding: 20px 10px 24px;
+  }
+
+  h3 {
+    margin-bottom: 8px;
+    font-size: 1.35rem;
+  }
+
+  h3 a:hover {
+    color: var(--color-primary-hover);
+  }
+
+  .card-body p {
+    flex: 1;
+    margin-bottom: 16px;
+    color: var(--color-muted);
+    font-size: 0.95rem;
+  }
+
+  .read-more span {
+    display: inline-grid;
+    width: 26px;
+    height: 26px;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--color-accent);
+    color: var(--color-primary);
+    transition: transform var(--transition);
+  }
+
+  .read-more:hover span {
+    transform: translateX(4px);
+  }
+</style>
