@@ -9,20 +9,29 @@ interface Props {
 }
 
 const { variant = "solid", active = "" } = Astro.props;
-
+const base = import.meta.env.BASE_URL;
+const home = `${base}`;
 const groups = await getCollection("groups");
 
 const links = [
-  { id: "inicio", label: "Inicio", href: "/#inicio" },
-  { id: "quienes-somos", label: "Quiénes somos", href: "/#quienes-somos" },
-  { id: "proyectos", label: "Proyectos", href: "/#proyectos" },
+  { id: "inicio", label: "Inicio", href: `${home}#inicio` },
+  {
+    id: "quienes-somos",
+    label: "Quiénes somos",
+    href: `${home}#quienes-somos`,
+  },
+  {
+    id: "proyectos",
+    label: "Proyectos",
+    href: `${home}#proyectos`,
+  },
   {
     id: "conocenos",
     label: "Conócenos",
-    href: "/#conocenos",
+    href: `${home}#conocenos`,
     children: groups.map((g) => ({
       label: g.data.nombre,
-      href: `/grupos/${g.id}/`,
+      href: `${base}grupos/${g.id}/`,
     })),
   },
 ];
@@ -30,7 +39,7 @@ const links = [
 
 <header class:list={["site-header", `is-${variant}`]} data-variant={variant}>
   <div class="nav-inner">
-    <a class="brand" href="/#inicio" aria-label="KBS, inicio">
+    <a class="brand" href={`${home}#inicio`} aria-label="KBS, inicio">
       <span class="brand-mark">KBS<span class="brand-dot">.</span></span>
       <span class="brand-tag">Comunidad académica</span>
     </a>
@@ -75,7 +84,7 @@ const links = [
       </ul>
     </nav>
 
-    <a class="nav-cta" href="/#conocenos">Sé parte</a>
+    <a class="nav-cta" href={`${home}#conocenos`}>Sé parte</a>
   </div>
 </header>
 
