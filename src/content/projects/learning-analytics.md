@@ -17,4 +17,5 @@ RUNCTY es un proyecto en fase de diseño que busca explorar una experiencia digi
 **Anexo 1.**  
 ![Trabajando](/images/projects/learningimages/plataforma-elearning.webp)
 
+DESARROLLADO: Kniwkedge Based Systems, research group
 Continuara...
