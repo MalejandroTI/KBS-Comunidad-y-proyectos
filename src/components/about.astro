@@ -1,4 +1,6 @@
 ---
+const base = import.meta.env.BASE_URL;
+
 ---
 
 <section class="about" id="quienes-somos">
@@ -12,11 +14,18 @@
       impulsando la investigación académica y la toma de decisiones.
       </p>
 
-      <a class="btn btn-secondary" href="/#conocenos">Conoce al grupo <span aria-hidden="true">→</span></a>
+      <a class="btn btn-secondary" href={`${base}#conocenos`}>
+  Conoce al grupo <span aria-hidden="true">→</span>
+</a>
     </div>
 
     <div class="about-image" role="img" aria-label="Espacio reservado para una fotografía del grupo KBS">
-      <img src="/images/about/grupo.jpg" alt="" loading="lazy" onerror="this.remove()" />
+            <img
+        src={`${base}images/about/grupo.jpg`}
+        alt=""
+        loading="lazy"
+        onerror="this.remove()"
+      />
       <div class="placeholder">
         <span>Imagen del grupo</span>
         <small>Reemplazar por una fotografía en /public/images/about/grupo.jpg</small>
