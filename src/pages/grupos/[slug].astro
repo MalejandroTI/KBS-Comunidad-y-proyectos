@@ -1,3 +1,4 @@
+
 ---
 import MainLayout from "../../layouts/MainLayout.astro";
 import MemberCard from "../../components/memberCard.astro";
@@ -13,6 +14,7 @@ export async function getStaticPaths() {
 }
 
 const { group } = Astro.props;
+const base = import.meta.env.BASE_URL;
 
 const members = await getCollection("members");
 const projects = await getCollection("projects");
@@ -25,7 +27,9 @@ const groupMembers = members.filter((member) =>
 
 const heroPhoto = group.data.foto_grupal ?? group.data.foto;
 
-const groupProjects = projects.filter((project) => group.data.proyectos.includes(project.id));
+const groupProjects = projects.filter((project) =>
+  (group.data.proyectos ?? []).includes(project.id)
+);
 ---
 
 <MainLayout
@@ -36,7 +40,10 @@ const groupProjects = projects.filter((project) => group.data.proyectos.includes
   <main>
     <section class="page-hero">
       <div class="wrap">
-        <a class="back-link" href="/#conocenos">← Volver a Conócenos</a>
+        <a class="back-link" href={`${base}#conocenos`}>
+          ← Volver a Conócenos
+        </a>
+
         <div class="hero-grid">
           <div class="hero-text">
             <p class="eyebrow on-dark">Comunidad KBS · Grupos</p>
@@ -48,7 +55,9 @@ const groupProjects = projects.filter((project) => group.data.proyectos.includes
           {heroPhoto && (
             <img
               class="cover"
-              src={heroPhoto}
+              src={heroPhoto.startsWith("/") && !heroPhoto.startsWith(base)
+                ? `${base}${heroPhoto.slice(1)}`
+                : heroPhoto}
               alt={`Fotografía del grupo ${group.data.nombre}`}
               onerror="this.style.display='none'"
             />
@@ -61,6 +70,7 @@ const groupProjects = projects.filter((project) => group.data.proyectos.includes
       <section class="block">
         <p class="eyebrow">El equipo</p>
         <h2>Integrantes</h2>
+
         {groupMembers.length > 0 ? (
           <div class="projects-grid members-grid">
             {groupMembers.map((member) => (
@@ -68,12 +78,14 @@ const groupProjects = projects.filter((project) => group.data.proyectos.includes
                 nombre={member.data.nombre}
                 correo={member.data.correo}
                 foto={member.data.foto}
-                href={`/integrantes/${member.id}/`}
+                href={`${base}integrantes/${member.id}/`}
               />
             ))}
           </div>
         ) : (
-          <p class="empty-state">Próximamente conocerás a los integrantes de este grupo.</p>
+          <p class="empty-state">
+            Próximamente conocerás a los integrantes de este grupo.
+          </p>
         )}
       </section>
 
@@ -84,7 +96,10 @@ const groupProjects = projects.filter((project) => group.data.proyectos.includes
         {groupProjects.length > 0 ? (
           <div class="projects-list">
             {groupProjects.map((project) => (
-              <a class="project-row" href={`/proyectos/${project.id}/`}>
+              <a
+                class="project-row"
+                href={`${base}proyectos/${project.id}/`}
+              >
                 <div>
                   <h3>{project.data.title}</h3>
                   <p>{project.data.description}</p>
@@ -94,7 +109,9 @@ const groupProjects = projects.filter((project) => group.data.proyectos.includes
             ))}
           </div>
         ) : (
-          <p class="empty-state">Este grupo todavía no tiene proyectos publicados.</p>
+          <p class="empty-state">
+            Este grupo todavía no tiene proyectos publicados.
+          </p>
         )}
       </section>
 
@@ -103,11 +120,21 @@ const groupProjects = projects.filter((project) => group.data.proyectos.includes
           <p class="eyebrow on-dark">Contacto</p>
           <h2>Hablemos</h2>
         </div>
+
         <div class="contact-actions">
-          <a class="btn btn-primary" href={`mailto:${group.data.contacto.correo}`}>
+          <a
+            class="btn btn-primary"
+            href={`mailto:${group.data.contacto.correo}`}
+          >
             {group.data.contacto.correo}
           </a>
-          <a class="btn btn-ghost" href={group.data.contacto.github} target="_blank" rel="noopener noreferrer">
+
+          <a
+            class="btn btn-ghost"
+            href={group.data.contacto.github}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             GitHub ↗
           </a>
         </div>
