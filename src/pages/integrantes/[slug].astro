@@ -1,7 +1,12 @@
+
 ---
 import MainLayout from "../../layouts/MainLayout.astro";
 import { getCollection, render } from "astro:content";
 import { withBase } from "../../utils/paths";
+
+const base = import.meta.env.BASE_URL.endsWith("/")
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
 
 export async function getStaticPaths() {
   const members = await getCollection("members");
@@ -16,7 +21,10 @@ const { member } = Astro.props;
 const { Content } = await render(member);
 
 const groups = await getCollection("groups");
-const group = groups.find((item) => item.id.toLowerCase() === member.data.grupo.toLowerCase());
+const group = groups.find(
+  (item) =>
+    item.id.toLowerCase() === member.data.grupo.toLowerCase()
+);
 
 const projects = await getCollection("projects");
 const memberProjects = projects.filter((project) =>
@@ -34,7 +42,14 @@ const memberProjects = projects.filter((project) =>
   <main>
     <section class="page-hero">
       <div class="wrap">
-        <a class="back-link" href={group ? withBase(`grupos/${group.id}/`) : withBase("#conocenos")}>
+        <a
+          class="back-link"
+          href={
+            group
+              ? `${base}grupos/${group.id}/`
+              : `${base}#conocenos`
+          }
+        >
           ← {group ? "Volver al grupo" : "Volver a Conócenos"}
         </a>
       </div>
@@ -53,21 +68,37 @@ const memberProjects = projects.filter((project) =>
         <div class="profile-info">
           <p class="eyebrow">Perfil del integrante</p>
           <h1>{member.data.nombre}</h1>
+
           <p class="role">
             {group ? (
-              <a class="tag" href={withBase(`grupos/${group.id}/`)}>{group.data.nombre}</a>
+              <a
+                class="tag"
+                href={`${base}grupos/${group.id}/`}
+              >
+                {group.data.nombre}
+              </a>
             ) : (
               <span class="tag">Integrante de KBS</span>
             )}
           </p>
 
-          <a class="email" href={`mailto:${member.data.correo}`}>{member.data.correo}</a>
+          <a class="email" href={`mailto:${member.data.correo}`}>
+            {member.data.correo}
+          </a>
 
-          <div class="bio"><Content /></div>
+          <div class="bio">
+            <Content />
+          </div>
 
           <div class="social-links">
             {member.data.links.map((link) => (
-              <a href={link.url} target="_blank" rel="noopener noreferrer">{link.nombre} ↗</a>
+              <a
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {link.nombre} ↗
+              </a>
             ))}
           </div>
         </div>
@@ -80,7 +111,13 @@ const memberProjects = projects.filter((project) =>
             <h2>Parte de {group.data.nombre}</h2>
             <p class="text-muted">{group.data.slogan}</p>
           </div>
-          <a class="btn btn-secondary" href={withBase(`grupos/${group.id}/`)}>Conocer al grupo →</a>
+
+          <a
+            class="btn btn-secondary"
+            href={`${base}grupos/${group.id}/`}
+          >
+            Conocer al grupo →
+          </a>
         </section>
       )}
 
@@ -91,17 +128,23 @@ const memberProjects = projects.filter((project) =>
         {memberProjects.length > 0 ? (
           <div class="projects-list">
             {memberProjects.map((project) => (
-              <a class="project-row" href={withBase(`proyectos/${project.id}/`)}>
+              <a
+                class="project-row"
+                href={`${base}proyectos/${project.id}/`}
+              >
                 <div>
                   <h3>{project.data.title}</h3>
                   <p>{project.data.description}</p>
                 </div>
+
                 <span class="tag">{project.data.status}</span>
               </a>
             ))}
           </div>
         ) : (
-          <p class="empty-state">Este integrante todavía no tiene proyectos publicados.</p>
+          <p class="empty-state">
+            Este integrante todavía no tiene proyectos publicados.
+          </p>
         )}
       </section>
     </div>
