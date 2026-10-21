@@ -1,6 +1,9 @@
 ---
-import { withBase } from "../utils/paths";
 const year = new Date().getFullYear();
+
+const base = import.meta.env.BASE_URL.endsWith("/")
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
 ---
 
 <footer class="site-footer">
@@ -11,10 +14,10 @@ const year = new Date().getFullYear();
     </div>
 
     <nav class="footer-links" aria-label="Pie de página">
-      <a href={withBase("#inicio")}>Inicio</a>
-      <a href={withBase("#quienes-somos")}>Quiénes somos</a>
-      <a href={withBase("#proyectos")}>Proyectos</a>
-      <a href={withBase("#conocenos")}>Conócenos</a>
+      <a href={`${base}#inicio`}>Inicio</a>
+      <a href={`${base}#quienes-somos`}>Quiénes somos</a>
+      <a href={`${base}#proyectos`}>Proyectos</a>
+      <a href={`${base}#conocenos`}>Conócenos</a>
     </nav>
   </div>
 
