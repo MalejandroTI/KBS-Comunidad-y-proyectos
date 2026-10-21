@@ -1,6 +1,7 @@
 ---
 import MainLayout from "../../layouts/MainLayout.astro";
 import { getCollection, render } from "astro:content";
+import { withBase } from "../../utils/paths";
 
 export async function getStaticPaths() {
   const members = await getCollection("members");
@@ -33,7 +34,7 @@ const memberProjects = projects.filter((project) =>
   <main>
     <section class="page-hero">
       <div class="wrap">
-        <a class="back-link" href={group ? `/grupos/${group.id}/` : "/#conocenos"}>
+        <a class="back-link" href={group ? withBase(`grupos/${group.id}/`) : withBase("#conocenos")}>
           ← {group ? "Volver al grupo" : "Volver a Conócenos"}
         </a>
       </div>
@@ -43,7 +44,7 @@ const memberProjects = projects.filter((project) =>
       <section class="profile-header">
         <div class="profile-photo">
           <img
-            src={member.data.foto}
+            src={withBase(member.data.foto)}
             alt={`Foto de ${member.data.nombre}`}
             onerror="this.style.visibility='hidden'"
           />
@@ -54,7 +55,7 @@ const memberProjects = projects.filter((project) =>
           <h1>{member.data.nombre}</h1>
           <p class="role">
             {group ? (
-              <a class="tag" href={`/grupos/${group.id}/`}>{group.data.nombre}</a>
+              <a class="tag" href={withBase(`grupos/${group.id}/`)}>{group.data.nombre}</a>
             ) : (
               <span class="tag">Integrante de KBS</span>
             )}
@@ -79,7 +80,7 @@ const memberProjects = projects.filter((project) =>
             <h2>Parte de {group.data.nombre}</h2>
             <p class="text-muted">{group.data.slogan}</p>
           </div>
-          <a class="btn btn-secondary" href={`/grupos/${group.id}/`}>Conocer al grupo →</a>
+          <a class="btn btn-secondary" href={withBase(`grupos/${group.id}/`)}>Conocer al grupo →</a>
         </section>
       )}
 
@@ -90,7 +91,7 @@ const memberProjects = projects.filter((project) =>
         {memberProjects.length > 0 ? (
           <div class="projects-list">
             {memberProjects.map((project) => (
-              <a class="project-row" href={`/proyectos/${project.id}/`}>
+              <a class="project-row" href={withBase(`proyectos/${project.id}/`)}>
                 <div>
                   <h3>{project.data.title}</h3>
                   <p>{project.data.description}</p>

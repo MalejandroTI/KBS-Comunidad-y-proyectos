@@ -1,5 +1,5 @@
 ---
-const base = import.meta.env.BASE_URL;
+import { withBase } from "../utils/paths";
 
 interface Slide {
   image: string;
@@ -16,9 +16,9 @@ interface Props {
  */
 const {
   slides = [
-    { image: `${base}images/hero/hero-1.webp`, alt: "Integrantes de KBS trabajando en equipo" },
-    { image: `${base}images/hero/hero-2.webp`, alt: "Presentación de un proyecto de KBS" },
-    { image: `${base}images/hero/hero-3.webp`, alt: "Sesión de aprendizaje de la comunidad KBS" },
+    { image: withBase("images/hero/hero-1.webp"), alt: "Integrantes de KBS trabajando en equipo" },
+    { image: withBase("images/hero/hero-2.webp"), alt: "Presentación de un proyecto de KBS" },
+    { image: withBase("images/hero/hero-3.webp"), alt: "Sesión de aprendizaje de la comunidad KBS" },
   ],
 } = Astro.props;
 ---
@@ -47,9 +47,9 @@ const {
     <p class="hero-aux">Encuentra proyectos, grupos y personas según lo que necesitas.</p>
 
     <div class="hero-actions">
-      <a class="btn btn-light" href={`${base}#proyectos`}>Explorar proyectos</a>
-      <a class="btn btn-light" href={`${base}#conocenos`}>Conocer los grupos</a>
-      <a class="hero-link" href={`${base}#quienes-somos`}>
+      <a class="btn btn-light" href={withBase("#proyectos")}>Explorar proyectos</a>
+      <a class="btn btn-light" href={withBase("#conocenos")}>Conocer los grupos</a>
+      <a class="hero-link" href={withBase("#quienes-somos")}>
         Encontrar mi ruta con KBS <span aria-hidden="true">↓</span>
       </a>
     </div>

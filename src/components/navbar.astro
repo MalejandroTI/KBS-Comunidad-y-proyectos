@@ -1,5 +1,6 @@
 ---
 import { getCollection } from "astro:content";
+import { withBase } from "../utils/paths";
 
 interface Props {
   /** "overlay": transparente sobre el hero (inicio). "solid": azul marino en páginas internas. */
@@ -9,8 +10,7 @@ interface Props {
 }
 
 const { variant = "solid", active = "" } = Astro.props;
-const base = import.meta.env.BASE_URL;
-const home = `${base}`;
+const home = withBase("/");
 const groups = await getCollection("groups");
 
 const links = [
@@ -31,7 +31,7 @@ const links = [
     href: `${home}#conocenos`,
     children: groups.map((g) => ({
       label: g.data.nombre,
-      href: `${base}grupos/${g.id}/`,
+      href: withBase(`grupos/${g.id}/`),
     })),
   },
 ];

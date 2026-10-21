@@ -1,6 +1,7 @@
 ---
 import MainLayout from "../../layouts/MainLayout.astro";
 import { getCollection, render } from "astro:content";
+import { withBase } from "../../utils/paths";
 
 export async function getStaticPaths() {
   const projects = await getCollection("projects");
@@ -34,7 +35,7 @@ const projectMembers = members.filter((member) =>
   <main class="project-page">
     <section class="page-hero">
       <div class="wrap">
-        <a class="back-link" href="/#proyectos">← Volver a proyectos</a>
+        <a class="back-link" href={withBase("#proyectos")}>← Volver a proyectos</a>
 
         <div class="hero-grid">
           <div class="hero-text">
@@ -52,7 +53,7 @@ const projectMembers = members.filter((member) =>
 
           <img
             class="cover"
-            src={project.data.image}
+            src={withBase(project.data.image)}
             alt={`Imagen del proyecto ${project.data.title}`}
             onerror="this.style.display='none'"
           />
@@ -81,7 +82,7 @@ const projectMembers = members.filter((member) =>
           <div class="info-item">
             <span>Grupo responsable</span>
             {projectGroup ? (
-              <a class="read-more" href={`/grupos/${projectGroup.id}/`}>{projectGroup.data.nombre}</a>
+              <a class="read-more" href={withBase(`grupos/${projectGroup.id}/`)}>{projectGroup.data.nombre}</a>
             ) : (
               <strong>Grupo no encontrado</strong>
             )}
@@ -92,7 +93,7 @@ const projectMembers = members.filter((member) =>
             {projectMembers.length > 0 ? (
               <ul class="plain-list">
                 {projectMembers.map((member) => (
-                  <li><a class="read-more" href={`/integrantes/${member.id}/`}>{member.data.nombre}</a></li>
+                  <li><a class="read-more" href={withBase(`integrantes/${member.id}/`)}>{member.data.nombre}</a></li>
                 ))}
               </ul>
             ) : (
@@ -102,7 +103,7 @@ const projectMembers = members.filter((member) =>
         </aside>
       </section>
 
-      <a class="btn btn-outline more" href="/#proyectos">← Explorar más proyectos</a>
+      <a class="btn btn-outline more" href={withBase("#proyectos")}>← Explorar más proyectos</a>
     </div>
   </main>
 </MainLayout>

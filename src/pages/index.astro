@@ -5,10 +5,8 @@ import About from "../components/about.astro";
 import ProjectCard from "../components/projectCard.astro";
 import GroupCard from "../components/groupCard.astro";
 import { getCollection } from "astro:content";
+import { withBase } from "../utils/paths";
 
-const base = import.meta.env.BASE_URL.endsWith("/")
-  ? import.meta.env.BASE_URL
-  : `${import.meta.env.BASE_URL}/`;
 const projects = await getCollection("projects");
 const groups = await getCollection("groups");
 
@@ -76,7 +74,7 @@ const categories = [
               technologies={project.data.technologies}
               image={project.data.image}
               status={project.data.status}
-              href={`${base}proyectos/${project.id}/`}
+              href={withBase(`proyectos/${project.id}/`)}
             />
           ))}
         </div>
@@ -114,7 +112,7 @@ const categories = [
               integrantes={group.data.integrantes}
               proyectos={group.data.proyectos}
               descripcion={group.data.descripcion}
-              href={`${base}grupos/${group.id}/`}
+              href={withBase(`grupos/${group.id}/`)}
             />
           ))}
         </div>

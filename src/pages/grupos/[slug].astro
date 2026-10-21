@@ -3,6 +3,7 @@
 import MainLayout from "../../layouts/MainLayout.astro";
 import MemberCard from "../../components/memberCard.astro";
 import { getCollection } from "astro:content";
+import { withBase } from "../../utils/paths";
 
 export async function getStaticPaths() {
   const groups = await getCollection("groups");
@@ -14,7 +15,6 @@ export async function getStaticPaths() {
 }
 
 const { group } = Astro.props;
-const base = import.meta.env.BASE_URL;
 
 const members = await getCollection("members");
 const projects = await getCollection("projects");
@@ -40,7 +40,7 @@ const groupProjects = projects.filter((project) =>
   <main>
     <section class="page-hero">
       <div class="wrap">
-        <a class="back-link" href={`${base}#conocenos`}>
+        <a class="back-link" href={withBase("#conocenos")}>
           ← Volver a Conócenos
         </a>
 
@@ -55,9 +55,7 @@ const groupProjects = projects.filter((project) =>
           {heroPhoto && (
             <img
               class="cover"
-              src={heroPhoto.startsWith("/") && !heroPhoto.startsWith(base)
-                ? `${base}${heroPhoto.slice(1)}`
-                : heroPhoto}
+              src={withBase(heroPhoto)}
               alt={`Fotografía del grupo ${group.data.nombre}`}
               onerror="this.style.display='none'"
             />
@@ -78,7 +76,7 @@ const groupProjects = projects.filter((project) =>
                 nombre={member.data.nombre}
                 correo={member.data.correo}
                 foto={member.data.foto}
-                href={`${base}integrantes/${member.id}/`}
+                href={withBase(`integrantes/${member.id}/`)}
               />
             ))}
           </div>
@@ -98,7 +96,7 @@ const groupProjects = projects.filter((project) =>
             {groupProjects.map((project) => (
               <a
                 class="project-row"
-                href={`${base}proyectos/${project.id}/`}
+                href={withBase(`proyectos/${project.id}/`)}
               >
                 <div>
                   <h3>{project.data.title}</h3>

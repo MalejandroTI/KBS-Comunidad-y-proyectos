@@ -1,4 +1,6 @@
 ---
+import { withBase } from "../utils/paths";
+
 interface Props {
   nombre: string;
   correo: string;
@@ -7,11 +9,12 @@ interface Props {
 }
 
 const { nombre, correo, foto, href } = Astro.props;
+const fotoSrc = withBase(foto);
 ---
 
 <a class="member-card" href={href}>
   <div class="card-image">
-    <img src={foto} alt={`Foto de ${nombre}`} loading="lazy" onerror="this.style.visibility='hidden'" />
+    <img src={fotoSrc} alt={`Foto de ${nombre}`} loading="lazy" onerror="this.style.visibility='hidden'" />
   </div>
   <div class="card-body">
     <h3>{nombre}</h3>

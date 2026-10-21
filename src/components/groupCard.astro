@@ -1,4 +1,7 @@
+
 ---
+import { withBase } from "../utils/paths";
+
 interface Props {
   nombre: string;
   slogan: string;
@@ -10,11 +13,18 @@ interface Props {
 }
 
 const { nombre, slogan, foto, integrantes, proyectos, descripcion, href } = Astro.props;
+
+const fotoSrc = withBase(foto);
 ---
 
 <article class="group-card">
   <div class="card-image">
-    <img src={foto} alt={`Grupo ${nombre}`} loading="lazy" onerror="this.style.visibility='hidden'" />
+    <img
+      src={fotoSrc}
+      alt={`Grupo ${nombre}`}
+      loading="lazy"
+      onerror="this.style.visibility='hidden'"
+    />
   </div>
 
   <div class="card-body">
@@ -27,7 +37,9 @@ const { nombre, slogan, foto, integrantes, proyectos, descripcion, href } = Astr
     <p class="slogan">{slogan}</p>
     <p class="desc">{descripcion}</p>
 
-    <a class="read-more" href={href}>Conocer al grupo <span aria-hidden="true">→</span></a>
+    <a class="read-more" href={href}>
+      Conocer al grupo <span aria-hidden="true">→</span>
+    </a>
   </div>
 </article>
 

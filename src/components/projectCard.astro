@@ -1,4 +1,7 @@
+
 ---
+import { withBase } from "../utils/paths";
+
 interface Props {
   title: string;
   description: string;
@@ -9,7 +12,10 @@ interface Props {
 }
 
 const { title, description, technologies, image, status, href } = Astro.props;
+
 const tags = [status, ...technologies];
+
+const imageSrc = withBase(image);
 ---
 
 <article class="project-card" data-tags={JSON.stringify(technologies)}>
@@ -19,7 +25,7 @@ const tags = [status, ...technologies];
 
   <a class="card-image" href={href} aria-label={`Ver proyecto ${title}`} tabindex="-1">
     <img
-      src={image}
+      src={imageSrc}
       alt={`Vista previa del proyecto ${title}`}
       loading="lazy"
       onerror="this.style.visibility='hidden'"
