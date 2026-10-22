@@ -10,10 +10,7 @@ interface Props {
   slides?: Slide[];
 }
 
-/**
- * Para usar fotografías reales, copia las imágenes en /public/images/hero/
- * y ajusta esta lista. Si el archivo no existe, se ve el degradado azul.
- */
+
 const {
   slides = [
     { image: withBase("images/hero/hero-1.webp"), alt: "Integrantes de KBS trabajando en equipo" },
@@ -38,7 +35,7 @@ const {
   <div class="hero-overlay"></div>
 
   <div class="hero-content">
-    <p class="eyebrow">KBS · DATA LAB</p>
+    <p class="eyebrow">KBS ·Knowledge Based Systems</p>
     <h1>Aprendemos, investigamos y creamos tecnología juntos</h1>
     <p class="hero-lead">
       Conectamos estudiantes, docentes y aliados para transformar conocimiento,

@@ -40,8 +40,11 @@ const links = [
 <header class:list={["site-header", `is-${variant}`]} data-variant={variant}>
   <div class="nav-inner">
     <a class="brand" href={`${home}#inicio`} aria-label="KBS, inicio">
-      <span class="brand-mark">KBS<span class="brand-dot">.</span></span>
-      <span class="brand-tag">Comunidad académica</span>
+      <img
+        class="brand-logo"
+        src={withBase("/kbs.png")}
+        alt="KBS - Sistemas Basados en el Conocimiento, Grupo de Investigación"
+      />
     </a>
 
     <button
@@ -390,4 +393,18 @@ const links = [
       display: none;
     }
   }
+
+.brand {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.brand-logo {
+  display: block;
+  width: 220px;
+  height: auto;
+  object-fit: contain;
+  padding: 8px 0;
+}
 </style>
